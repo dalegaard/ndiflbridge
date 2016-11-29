@@ -69,7 +69,7 @@ void worker_loop(std::shared_ptr<stream> stream, std::shared_ptr<frame_link> lin
   NDIlib_recv_create_t settings;
   settings.source_to_connect_to.p_ndi_name = stream->name.c_str();
   settings.source_to_connect_to.p_ip_address = 0;
-  settings.prefer_UYVY = false;
+  settings.color_format = NDIlib_recv_color_format_e_BGRX_BGRA;
   settings.bandwidth = NDIlib_recv_bandwidth_highest;
   settings.allow_video_fields = false;
 
@@ -267,7 +267,7 @@ int main_find(int argc, char *argv[]) {
   }
 
   while(!mustdie) {
-    unsigned int cnt;
+    int cnt;
     auto sources = NDIlib_find_get_sources(find, &cnt, 100);
     std::set<std::string> notseen = known;
     for(unsigned int i = 0; i < cnt; i++) {
@@ -331,7 +331,7 @@ int main_transmit(int argc, char *argv[]) {
           ndiframe.frame_rate_N = vframe->fps_num;
           ndiframe.frame_rate_D = vframe->fps_denom;
           ndiframe.picture_aspect_ratio = vframe->aspect_ratio;
-          ndiframe.is_progressive = false;
+          ndiframe.frame_format_type = NDIlib_frame_format_type_progressive;
           ndiframe.timecode = frame->timestamp / 100L;
           ndiframe.p_data = vframe->data();
           ndiframe.line_stride_in_bytes = vframe->stride;
