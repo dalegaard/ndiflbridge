@@ -40,7 +40,7 @@ NDIlib_FourCC_type_e framelink_to_ndi_format(int x) {
     case frame_link::frame_video::video_format::VIDEO_FORMAT_BGRA:
       return NDIlib_FourCC_type_BGRA;
     default:
-      throw "Unknown frame link video format";
+      throw std::invalid_argument("Unknown frame link video format");
       break;
   };
 }
@@ -49,9 +49,10 @@ frame_link::frame_video::video_format ndi_to_framelink_format(int x) {
     case NDIlib_FourCC_type_UYVY:
       return frame_link::frame_video::video_format::VIDEO_FORMAT_UYVY;
     case NDIlib_FourCC_type_BGRA:
+    case NDIlib_FourCC_type_BGRX:
       return frame_link::frame_video::video_format::VIDEO_FORMAT_BGRA;
     default:
-      throw "Unknown NDIlib video format";
+      throw std::invalid_argument("Unknown NDIlib video format");
   };
 }
 
@@ -377,6 +378,7 @@ int main(int argc, char *argv[]) {
   NDIlib_initialize();
   std::signal(SIGINT, &diesignal_handler);
   std::signal(SIGTERM, &diesignal_handler);
+  std::signal(SIGHUP, &diesignal_handler);
   setvbuf(stdout, NULL, _IOLBF, 200);
 
   if(strcmp(argv[1], "master") == 0) {
